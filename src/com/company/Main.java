@@ -9,19 +9,18 @@ public class Main {
 
     public static void main(String[] args) {
 
-        int guessNum = rand.nextInt(100) + 1; // Random Number
+        // Random Number
         boolean userWon = false;
 
-        System.out.println("A u ready? 1 to Yes and 2 to No");
+        String ans = askYesOrNo("Wanna play?");
 
-        int ans = scan.nextInt();
-        if (ans == 1) {
+        if (ans.equals("Yes")) {
 
-            while (ans == 1) {
+            while (ans.equals("Yes")) {
+                int guessNum = rand.nextInt(100) + 1;
                 for (int i = 0; i < 10; i++) {
 
-                    System.out.println("Enter your number: ");
-                    int userNum = scan.nextInt(); // User's Number
+                    int userNum = askInt("Enter your number: ", 1, 100); // User's Number
 
                     if (userNum == guessNum) {
                         System.out.println("Congrats!");
@@ -41,16 +40,40 @@ public class Main {
                     System.out.println("U PICKED THE WRONG HOUSE FOOL!");
                 }
 
-                System.out.println("One more try? 1 to Yes and 2 to No");
-                ans = scan.nextInt();
+                ans = askYesOrNo("One more time?");
+
             }
         }
 
-        if (ans == 2) {
+        if (ans.equals("No")) {
             System.out.println("Goodbye!");
         }
     }
 
+    static int askInt(String msg, int minNum, int maxNum) { // Ask User to enter his guess
+
+        while (true) {
+
+            System.out.println(msg);
+            int answerInt = scan.nextInt();
+            if (answerInt >= minNum && answerInt <= 100) {
+                return answerInt;
+            }
+            System.out.printf("Please, enter number from %d to %d!\n", minNum, maxNum);
+        }
+    }
+
+    static String askYesOrNo(String askingYesOrNo) { // Check if answer is valid
+        System.out.println(askingYesOrNo);
+        String answer = scan.next();
+
+        while (!answer.equals("Yes") && !answer.equals("No")) {
+            System.out.println("Just Yes or No");
+            answer = scan.next();
+        }
+
+        return answer;
+    }
 }
 
 
