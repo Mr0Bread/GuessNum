@@ -1,19 +1,14 @@
 package com.company;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
+
     static Random rand = new Random();
     static Scanner scan = new Scanner(System.in);
-    static ArrayList userNameArray = new ArrayList<String>();
+    static ArrayList<GameResult> userNameArray = new ArrayList<>();
 
     public static void main(String[] args) {
-
-        String userName = askUserName("Hi, what's your name?");
-        System.out.println(userName);
 
         boolean userWon = false;
 
@@ -22,32 +17,52 @@ public class Main {
         if (ans) {
 
             while (ans) {
-                int guessNum = rand.nextInt(100) + 1; // Random Number
+                String userName = askUserName("Hi, what's your name?");
+
+                int guessNum = rand.nextInt(100) + 1;// Random Number
+                System.out.println(guessNum);
+                long t1 = System.currentTimeMillis();
                 for (int i = 0; i < 10; i++) {
 
-                    int userNum = askInt("Enter your number: ", 1, 100); // User's Number
+                    int userNum = askInt("Enter your number: ", 1, 100); // Users Number
 
                     if (userNum == guessNum) {
                         System.out.println("Congrats!");
+                        GameResult r = new GameResult();
+                        r.name = userName;
+                        r.triesCount = i + 1;
+                        long t2 = System.currentTimeMillis();
+                        r.playTime = (t2 - t1) / 1000.0;
+                        userNameArray.add(r);
                         userWon = true;
                         break;
 
                     } else if (guessNum < userNum) {
                         System.out.println("Your Num is greater!");
 
-                    } else if (guessNum > userNum) {
+                    } else {
                         System.out.println("Your num is lesser!");
                     }
 
                 }
 
                 if (!userWon) {
-                    System.out.println("U PICKED THE WRONG HOUSE FOOL!");
+                    System.out.println("U PICKED THE WRONG HOUSE, FOOL!");
                 }
 
                 ans = askYesOrNo("One more time?");
 
             }
+        }
+
+        userNameArray.sort(Comparator.comparing(r -> r.triesCount));
+        userNameArray.sort(Comparator.comparing(r -> r.playTime));
+
+        System.out.println("Statistics:\n");
+
+        for (GameResult result : userNameArray
+        ) {
+            System.out.print("User name: " + result.name + "\nTries count: " + result.triesCount + "\n" + "Play time: " + result.playTime + " second(s)" + "\n\n");
         }
 
         if (!ans) {
@@ -72,7 +87,7 @@ public class Main {
         }
     }
 
-    static boolean askYesOrNo (String askingYesOrNo) { // Check if answer is valid
+    static boolean askYesOrNo(String askingYesOrNo) { // Check if answer is valid
         while (true) {
             System.out.println(askingYesOrNo);
             String answer = scan.next();
@@ -88,14 +103,9 @@ public class Main {
         }
     }
 
-    static String askUserName (String msg) {
+    static String askUserName(String msg) {
         System.out.println(msg);
-        String answer = scan.next();
-
-        if (!userNameArray.contains(answer)) {
-            userNameArray.add(answer);
-        }
-
+        return scan.next();
     }
 }
 
