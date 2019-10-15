@@ -1,14 +1,19 @@
 package com.company;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class Main {
 
     static Random rand = new Random();
     static Scanner scan = new Scanner(System.in);
-    static ArrayList<GameResult> userNameArray = new ArrayList<>();
+    static ArrayList<GameResult> leaderBoard = new ArrayList<>();
 
     public static void main(String[] args) {
+
+        loadResults();
 
         boolean userWon = false;
 
@@ -32,8 +37,8 @@ public class Main {
                         r.setName(userName);
                         r.setTriesCount(i + 1);
                         long t2 = System.currentTimeMillis();
-                        r.setTime((t2 - t1) / 1000);
-                        userNameArray.add(r);
+                        r.setTime(t2 - t1);
+                        leaderBoard.add(r);
                         userWon = true;
                         break;
 
@@ -55,19 +60,58 @@ public class Main {
             }
         }
 
-        userNameArray.sort(Comparator.comparing(GameResult::getTriesCount).thenComparing(GameResult::getTime));
-
-        System.out.println("Statistics:\n");
-
-        for (GameResult result : userNameArray
-        ) {
-            System.out.print("User name: " + result.getName() + "\nTries count: " + result.getTriesCount() + "\n" + "Play time: " + result.getTime() + " second(s)" + "\n\n");
-        }
-
         if (!ans) {
             System.out.println("Goodbye!");
         }
+
+        showResults2();
+
+        printInFile();
+
     }
+
+    private static void loadResults() {
+        File file = new File("Statistics.txt");
+        try (Scanner in = new Scanner(file)) {
+            while (in.hasNext()) {
+                GameResult r = new GameResult();
+
+                String name = in.next();
+                int tries = in.nextInt();
+                long time = in.nextInt();
+
+                r.setName(name);
+                r.setTriesCount(tries);
+                r.setTime(time);
+
+                leaderBoard.add(r);
+            }
+        } catch (IOException e) {
+            System.out.println("Can't read file!!!");
+        }
+    }
+
+
+    private static void showResults2() {
+        System.out.println("Statistics:\n");
+        leaderBoard.stream().sorted(Comparator.comparing(GameResult::getTriesCount).thenComparing(GameResult::getTime))
+                .limit(5)
+                .forEach(r -> System.out.print("User name: " + r.getName() + "\nTries count: " + r.getTriesCount() + "\n" + "Play time: " + r.getTime() + " millisecond(s)" + "\n\n"));
+    }
+
+    public static void printInFile() {
+        File file = new File("Statistics.txt");
+
+        try (PrintWriter out = new PrintWriter(file)) {
+
+            leaderBoard.stream().sorted(Comparator.comparing(GameResult::getTriesCount).thenComparing(GameResult::getTime))
+                    .forEach(r -> out.println(r.getName() + " " + r.getTriesCount() + " " + r.getTime()));
+
+        } catch (IOException e) {
+            System.out.println("something went wrong!");
+        }
+    }
+
 
     static int askInt(String msg, int minNum, int maxNum) { // Ask User to enter his guess
 
