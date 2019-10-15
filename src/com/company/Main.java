@@ -29,10 +29,10 @@ public class Main {
                     if (userNum == guessNum) {
                         System.out.println("Congrats!");
                         GameResult r = new GameResult();
-                        r.name = userName;
-                        r.triesCount = i + 1;
+                        r.setName(userName);
+                        r.setTriesCount(i + 1);
                         long t2 = System.currentTimeMillis();
-                        r.playTime = (t2 - t1) / 1000.0;
+                        r.setTime((t2 - t1) / 1000);
                         userNameArray.add(r);
                         userWon = true;
                         break;
@@ -55,14 +55,13 @@ public class Main {
             }
         }
 
-        userNameArray.sort(Comparator.comparing(r -> r.triesCount));
-        userNameArray.sort(Comparator.comparing(r -> r.playTime));
+        userNameArray.sort(Comparator.comparing(GameResult::getTriesCount).thenComparing(GameResult::getTime));
 
         System.out.println("Statistics:\n");
 
         for (GameResult result : userNameArray
         ) {
-            System.out.print("User name: " + result.name + "\nTries count: " + result.triesCount + "\n" + "Play time: " + result.playTime + " second(s)" + "\n\n");
+            System.out.print("User name: " + result.getName() + "\nTries count: " + result.getTriesCount() + "\n" + "Play time: " + result.getTime() + " second(s)" + "\n\n");
         }
 
         if (!ans) {
